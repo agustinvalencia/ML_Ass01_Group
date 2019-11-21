@@ -14,6 +14,19 @@ library(MASS)
 library(glmnet)
 ```
 
+# Assignment 1. Spam classification with nearest neighbors
+
+### 2. Use logistic regression to classify the training and test data by the classification principle $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.5$, otherwise $\hat{Y} = 0$ and report the confusion matrices and the misclassification rates for train and test data. Analyze the obtained results. 
+
+### 3. Use logistic regression to classify the test data by the classification principle  $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.8$, otherwise $\hat{Y} = 0$ 
+
+### 4. Use standard kknn() with K = 30 from package *kknn*, report the misclassification rates for the training and test data and compare the results with step 2.
+
+
+### 5. Repeat step 4 for K=1 and compare results with step 4. What effects does the decrease of K lead to and why?
+
+
+
 # Assignment 3. Feature selection by cross-validation in a linear model. 
 
 ### 1. Implement an R function that performs feature selection (best subset selection) in linear regression by using k-fold cross-validation without using any specialized function like lm() (**use only basic R functions**) your function should depend on: 
