@@ -110,6 +110,8 @@ myCV(as.matrix(swiss[,2:6]), swiss[[1]], 5)
 
 ```
 
+The result shows the best subset is (1,0,1,1,1) with MSE 60.15763. From the plot, we can observe that with the number of features increases, in general, the values of MSE decreases. For the best subset, its' MSE minimized when the number of features is 4. When the number of features is small, the model can be inaccurate, but if with too many parameters, the model will be difficult to use and interpret since it's overfitted.
+
 # Assignment 4. Linear regression and regularization
 
 ### 1. Import data and create a plot of Moisture versus Protein. Do you think these data are described well by a linear model? 
@@ -257,3 +259,5 @@ From the cross-validated model it is seen that the  $\lambda$ value for which it
 
 For (4) after performing a stepAIC over the model 36 variables were dropped, getting a final model with only 63 variables (plus the intercept). Nonetheless, for (7) after cross-validating the LASSO model it has been found that the best performance regarding MSE scores is at $\lambda=0$ which implies no penalization, thus, no parameters will be dropped.
 
+```{r}
+```
