@@ -1,6 +1,6 @@
 ---
 title: "ML01_Group15_Report"
-author: "Zuxiang Li, Marcos F. Mourao, Agustín Valencia"
+author: "Zuxiang Li (zuxli371), Marcos F. Mourao (marfr825), Agustín Valencia (aguva779)"
 date: "11/21/2019"
 output: pdf_document
 ---
