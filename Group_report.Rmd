@@ -311,7 +311,8 @@ myCV=function(X,Y,Nfolds){
             for (k in 1:Nfolds){
               #MISSING: compute which indices should belong to current fold
               current_feat=which(model==1)
-			  #MISSING: implement cross-validation for model with features in "model" and iteration i.
+			  #MISSING: implement cross-validation for model with features in "model" 
+			  #and iteration i.
               begin_pos=(k-1)*sF+1
               if(k==Nfolds){
                 end_pos=length(Y1)
@@ -327,7 +328,8 @@ myCV=function(X,Y,Nfolds){
               
               Ypred=mylin(train_X,train_Y,test_X)
                             
-			  #MISSING: Get the predicted values for fold 'k', Ypred, and the original values for folf 'k', Yp.
+			  #MISSING: Get the predicted values for fold 'k', Ypred, and the original 
+			  #values for folf 'k', Yp.
               Yp=Y1[begin_pos:end_pos]
               SSE=SSE+sum((Ypred-Yp)^2)
             }
@@ -425,7 +427,8 @@ p <- p +geom_point(data = df, aes( x = degree, y = MSE_train, color="Train")) +
     geom_line(data = df, aes( x = degree, y = MSE_train, color="Train"))
 p <- p + geom_point(data = df, aes( x = degree, y = MSE_test, color="Test")) + 
     geom_line(data = df, aes( x = degree, y = MSE_test, color="Test"))
-p <- p + labs(y="MSE", colour="Dataset", title = "Mean Square Errors") + geom_line() 
+p <- p + labs(y="MSE", colour="Dataset", title = "Mean Square Errors") + 
+      geom_line() 
 p
 
 ```
@@ -459,7 +462,8 @@ plot(model_lasso, xvar="lambda", label=T)
 ### 4.7
 ```{r, eval=FALSE}
 lambdas <- append(model_lasso$lambda,0)
-cv_model_lasso <- cv.glmnet(as.matrix(covariates), response, alpha=1, family="gaussian", lambda=lambdas)
+cv_model_lasso <- cv.glmnet(as.matrix(covariates), response, alpha=1, 
+                            family="gaussian", lambda=lambdas)
 cat("The best performance was at lambda = ", cv_model_lasso$lambda.min, "\n")
 cv_model_lasso
 plot(cv_model_lasso)
