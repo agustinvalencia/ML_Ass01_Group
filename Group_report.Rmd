@@ -9,4 +9,11 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Fuck my life
+# Assignment 3. Feature selection by cross-validation in a linear model. 
+
+### 1. Implement an R function that performs feature selection (best subset selection) in linear regression by using k-fold cross-validation without using any specialized function like lm() (**use only basic R functions**) your function should depend on: 
+- $X$: Matrix containing X measurements.
+- $Y$: Vector containing Y measurements.
+- $Nfolds$: number of folds in the cross-validation.
+
+You may assume in your code that matrix $X$ has 5 columns. The function should plot the CV scores computed for various feature subsets against the number of features, and it should  also return the optimal subset of features and the corresponding cross-validation (CV) score. Before splitting into folds, the data should be permuted and the seed 12345 should be used for that purpose. 
