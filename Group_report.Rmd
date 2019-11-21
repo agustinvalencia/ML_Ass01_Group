@@ -267,10 +267,12 @@ From the cross-validated model it is seen that the  $\lambda$ value for which it
 
 For (4) after performing a stepAIC over the model 36 variables were dropped, getting a final model with only 63 variables (plus the intercept). Nonetheless, for (7) after cross-validating the LASSO model it has been found that the best performance regarding MSE scores is at $\lambda=0$ which implies no penalization, thus, no parameters will be dropped.
 
+\newpage
+# Appendix A - Code chunks
 
-# Apendix
+## Code used for Assignment 3
 
-```{r,echo=TRUE,out.height='30%', fig.align='center',results='hide',fig.show = 'hide'}
+```{r, eval=FALSE}
 
 #linear regression
 mylin=function(X,Y, Xpred){
@@ -348,5 +350,135 @@ myCV=function(X,Y,Nfolds){
 }
 
 myCV(as.matrix(swiss[,2:6]), swiss[[1]], 5)
+```
+
+
+## Code used for Assignment 4
+
+### 4.1
+```{r, eval=FALSE}
+## Import data and plot Moisture vs Protein.
+data <- read.xlsx("data/tecator.xlsx")
+plot(data$Protein, data$Moisture)
+```
+
+### 4.3
+```{r, eval=FALSE}
+# Creating data sets
+p <- data$Protein
+y <- data$Moisture
+P <- data.frame(
+    Y = y,
+    P1 = p, 
+    P2 = p^2, 
+    P3 = p^3, 
+    P4 = p^4, 
+    P5 = p^5, 
+    P6 = p^6 
+)
+
+n = dim(P)[1]
+set.seed(12345)
+id = sample(1:n, floor(n*0.5))
+train = P[id,]
+test = P[-id,]
+
+# Training models
+M1 <- lm(Y ~ ., data = train[,1:2])
+M2 <- lm(Y ~ ., data = train[,1:3])
+M3 <- lm(Y ~ ., data = train[,1:4])
+M4 <- lm(Y ~ ., data = train[,1:5])
+M5 <- lm(Y ~ ., data = train[,1:6])
+M6 <- lm(Y ~ ., data = train[,1:7])
+
+## Train Scores
+eval_model <- function(model, data) {
+  pred <- predict(model, data)
+  errors <- pred - data$Y
+  MSE <- mean(errors^2)
+  return(MSE)
+}
+
+MSE_train <- c()
+MSE_train[1] <- eval_model(M1, train)
+MSE_train[2] <- eval_model(M2, train)
+MSE_train[3] <- eval_model(M3, train)
+MSE_train[4] <- eval_model(M4, train)
+MSE_train[5] <- eval_model(M5, train)
+MSE_train[6] <- eval_model(M6, train)
+
+MSE_test <- c()
+MSE_test[1] <- eval_model(M1, test)
+MSE_test[2] <- eval_model(M2, test)
+MSE_test[3] <- eval_model(M3, test)
+MSE_test[4] <- eval_model(M4, test)
+MSE_test[5] <- eval_model(M5, test)
+MSE_test[6] <- eval_model(M6, test)
+
+df <- data.frame(
+    degree <- c(1:6),
+    MSE_train,
+    MSE_test
+)
+p <- ggplot()
+p <- p +geom_point(data = df, aes( x = degree, y = MSE_train, color="Train")) + 
+    geom_line(data = df, aes( x = degree, y = MSE_train, color="Train"))
+p <- p + geom_point(data = df, aes( x = degree, y = MSE_test, color="Test")) + 
+    geom_line(data = df, aes( x = degree, y = MSE_test, color="Test"))
+p <- p + labs(y="MSE", colour="Dataset", title = "Mean Square Errors") + geom_line() 
+p
 
 ```
+
+### 4.4
+```{r, eval=FALSE}
+adhok_data <- data[,2:101]
+Fat <- data$Fat
+adhok_data <- cbind(adhok_data, Fat)
+model <- lm(Fat ~ . , data=adhok_data) 
+step <- stepAIC(model, direction ="both")
+selected_vars <- step$coefficients
+cat("There were selected", length(selected_vars), "variables\n")
+```
+
+### 4.5
+```{r, eval=FALSE}
+covariates <- scale(adhok_data[1:(length(adhok_data)-1)])
+response <- scale(adhok_data$Fat)
+model_ridge <- glmnet(covariates, response, alpha = 0, family = "gaussian")
+plot(model_ridge, xvar="lambda", label=T)
+```
+
+
+### 4.6
+```{r, eval=FALSE}
+model_lasso <- glmnet(covariates, response, alpha = 1, family = "gaussian")
+plot(model_lasso, xvar="lambda", label=T)
+```
+
+### 4.7
+```{r, eval=FALSE}
+lambdas <- append(model_lasso$lambda,0)
+cv_model_lasso <- cv.glmnet(as.matrix(covariates), response, alpha=1, family="gaussian", lambda=lambdas)
+cat("The best performance was at lambda = ", cv_model_lasso$lambda.min, "\n")
+cv_model_lasso
+plot(cv_model_lasso)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
