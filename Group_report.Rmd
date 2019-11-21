@@ -16,16 +16,107 @@ library(glmnet)
 
 # Assignment 1. Spam classification with nearest neighbors
 
+```{r, echo=FALSE}
+#import and read data
+data <- read.xlsx("./data/spambase.xlsx")
+#dividing data
+n=dim(data)[1]
+set.seed(12345)
+id=sample(1:n, floor(n*0.5))
+#train
+train=data[id,]
+#test
+test=data[-id,]
+
+confusion <- function(data, criteria, pred) {
+    #criteria
+    predicted <- as.integer(pred > criteria)
+    
+    #confusion matrix
+    true <- data$Spam
+    conf <- table(true, predicted)
+    
+    #misclassification rate
+    total <- sum(conf)
+    tp <- conf[2,2]
+    tn <- conf[1,1]
+    fp <- conf[1,2]
+    fn <- conf[2,1]
+    miss <- 100 * (fp + fn) / total
+    
+    #other rates
+    true_positive <- 100 * tp/(tp + fp)
+    true_negative <- 100 * tn/(tn + fn)
+    false_positive <- 100 * fp/(tp + fp)
+    false_negative <- 100 * fn/(tn + fn)
+    
+    df <- data.frame(Rate = c("True positive", "True negative", "False positive", "False negative", "Misclassification"),
+                     Value = c(true_positive, true_negative, false_positive, false_negative, miss))
+    
+    print(df)
+    return(conf)
+}
+```
+
 ### 2. Use logistic regression to classify the training and test data by the classification principle $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.5$, otherwise $\hat{Y} = 0$ and report the confusion matrices and the misclassification rates for train and test data. Analyze the obtained results. 
+
+```{r, warning=FALSE, echo=FALSE}
+#model
+form <- Spam ~ .
+model <- glm(formula = form, data = train, family = "binomial")
+#train
+pred <- predict(model, train, type = "response")
+confusion(data = train, criteria = 0.5, pred = pred)
+#test
+pred <- predict(model, test, type = "response")
+confusion(data = test, criteria = 0.5, pred = pred)
+```
+
+The confusion matrix measure how well our model is performing under its training. For this particular classification principle, the miscalssification rate is somewhat low (~17%), but the false positive rate is high (~30%). This means that real mail is often being flagged as spam. To reduce this, we can increase the classification principle, as we can see below.
 
 ### 3. Use logistic regression to classify the test data by the classification principle  $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.8$, otherwise $\hat{Y} = 0$ 
 
+```{r, echo=FALSE}
+#train
+pred <- predict(model, train, type = "response")
+confusion(data = train, criteria = 0.8, pred = pred)
+#test
+pred <- predict(model, test, type = "response")
+confusion(data = test, criteria = 0.8, pred = pred)
+```
+
+Even though the misclassification rate went up with the new criteria, it is still preffered over the old criteria. In this particular classification scenario (spam or not spam), classifying "real mail" as spam is much worse than classifying spam as "real mail". From a user point of view, having some spam on one's inbox is better than missing "real mail" that went to the spam box. Here, the key is analysing the false positive rate, which is much smaller for the new criteria of 0.8.
+
 ### 4. Use standard kknn() with K = 30 from package *kknn*, report the misclassification rates for the training and test data and compare the results with step 2.
 
+```{r, echo=FALSE}
+model <- train.kknn(formula = form, data = train, ks = 30)
+
+
+#train
+pred <- predict(model, train)
+confusion(data = train, criteria = 0.5, pred = pred)
+#test
+pred <- predict(model, test)
+confusion(data = test, criteria = 0.5, pred = pred)
+```
+
+The new model has worse results than the logistic regression with significantly higher miscalssification rates for both test and training data. This approach also results in a higher number of false positives and false negatives.
 
 ### 5. Repeat step 4 for K=1 and compare results with step 4. What effects does the decrease of K lead to and why?
 
+```{r, echo=FALSE}
+model <- train.kknn(formula = form, data = train, ks = 1)
 
+#train
+pred <- predict(model, train)
+confusion(data = train, criteria = 0.5, pred = pred)
+#test
+pred <- predict(model, test)
+confusion(data = test, criteria = 0.5, pred = pred)
+```
+
+In this case, decreasing K to 1 in our model completly overfitted the data. That is, the predicted values according to the model are exaclty the training values. This leads to worse performance using the testing data: higher misclassification, false positives, and false negatives rates. When run against the training data, the misclassification rate was 0%, as expected.
 
 # Assignment 3. Feature selection by cross-validation in a linear model. 
 
@@ -36,7 +127,7 @@ library(glmnet)
 
 Report the resulting plot and interpret it. Report the optimal subset of features and comment whether it is reasonable that these specific features have largest impact on the target.
 
-```{r, echo=FALSE,out.height='30%', fig.align='center'}
+```{r, echo=FALSE, out.height='30%', fig.align='center'}
 #linear regression
 mylin=function(X,Y, Xpred){
   X1=cbind(1,X)
@@ -270,7 +361,102 @@ For (4) after performing a stepAIC over the model 36 variables were dropped, get
 \newpage
 # Appendix A - Code chunks
 
+## Code used for Assignment 1
+
+### 1.1 
+```{r, eval=FALSE}
+#import and read data
+data <- read.xlsx("./data/spambase.xlsx")
+#dividing data
+n=dim(data)[1]
+set.seed(12345)
+id=sample(1:n, floor(n*0.5))
+#train
+train=data[id,]
+#test
+test=data[-id,]
+
+confusion <- function(data, criteria, pred) {
+    #criteria
+    predicted <- as.integer(pred > criteria)
+    
+    #confusion matrix
+    true <- data$Spam
+    conf <- table(true, predicted)
+    
+    #misclassification rate
+    total <- sum(conf)
+    tp <- conf[2,2]
+    tn <- conf[1,1]
+    fp <- conf[1,2]
+    fn <- conf[2,1]
+    miss <- 100 * (fp + fn) / total
+    
+    #other rates
+    true_positive <- 100 * tp/(tp + fp)
+    true_negative <- 100 * tn/(tn + fn)
+    false_positive <- 100 * fp/(tp + fp)
+    false_negative <- 100 * fn/(tn + fn)
+    
+    df <- data.frame(Rate = c("True positive", "True negative", "False positive", "False negative", "Misclassification"),
+                     Value = c(true_positive, true_negative, false_positive, false_negative, miss))
+    
+    print(df)
+    return(conf)
+}
+```
+
+### 1.2 
+```{r, eval=FALSE}
+#model
+form <- Spam ~ .
+model <- glm(formula = form, data = train, family = "binomial")
+#train
+pred <- predict(model, train, type = "response")
+confusion(data = train, criteria = 0.5, pred = pred)
+#test
+pred <- predict(model, test, type = "response")
+confusion(data = test, criteria = 0.5, pred = pred)
+```
+
+### 1.3
+```{r, eval=FALSE}
+#train
+pred <- predict(model, train, type = "response")
+confusion(data = train, criteria = 0.8, pred = pred)
+#test
+pred <- predict(model, test, type = "response")
+confusion(data = test, criteria = 0.8, pred = pred)
+```
+
+### 1.4
+```{r, eval=FALSE}
+model <- train.kknn(formula = form, data = train, ks = 30)
+
+
+#train
+pred <- predict(model, train)
+confusion(data = train, criteria = 0.5, pred = pred)
+#test
+pred <- predict(model, test)
+confusion(data = test, criteria = 0.5, pred = pred)
+```
+
+### 1.5
+```{r, eval=FALSE}
+model <- train.kknn(formula = form, data = train, ks = 1)
+
+#train
+pred <- predict(model, train)
+confusion(data = train, criteria = 0.5, pred = pred)
+#test
+pred <- predict(model, test)
+confusion(data = test, criteria = 0.5, pred = pred)
+```
+
+
 ## Code used for Assignment 3
+
 
 ```{r, eval=FALSE}
 
