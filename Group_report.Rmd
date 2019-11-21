@@ -1,5 +1,5 @@
 ---
-title: "ML01_Group15_Report"
+title: "Machine Learning Assignment 01 - Group 15"
 author: "Zuxiang Li (zuxli371), Marcos F. Mourao (marfr825), Agustín Valencia (aguva779)"
 date: "11/21/2019"
 output: pdf_document
@@ -29,21 +29,14 @@ library(glmnet)
 
 # Assignment 3. Feature selection by cross-validation in a linear model. 
 
-### 1. Implement an R function that performs feature selection (best subset selection) in linear regression by using k-fold cross-validation without using any specialized function like lm() (**use only basic R functions**) your function should depend on: 
-- $X$: Matrix containing X measurements.
-- $Y$: Vector containing Y measurements.
-- $Nfolds$: number of folds in the cross-validation.
-
-You may assume in your code that matrix $X$ has 5 columns. The function should plot the CV scores computed for various feature subsets against the number of features, and it should  also return the optimal subset of features and the corresponding cross-validation (CV) score. Before splitting into folds, the data should be permuted and the seed 12345 should be used for that purpose. 
-
 ### 2. Test your function on data set swiss available in the standard R repository: 
 * Fertility should be Y
 * All other variables should be X
 * Nfolds should be 5
 
 Report the resulting plot and interpret it. Report the optimal subset of features and comment whether it is reasonable that these specific features have largest impact on the target.
-```{r, echo=FALSE,out.height='30%', fig.align='center'}
 
+```{r, echo=FALSE,out.height='30%', fig.align='center'}
 #linear regression
 mylin=function(X,Y, Xpred){
   X1=cbind(1,X)
@@ -107,14 +100,12 @@ myCV=function(X,Y,Nfolds){
             Features[[curr]]=model
           }
   #MISSING: plot MSE against number of features
-  library(ggplot2)
   df<-data.frame(number=c(),MSE=c())
   for(i in 1:length(Features)){
     tmp=data.frame(number=sum(Features[[i]]),MSE=MSE[i])
     df=rbind(df,tmp)
   }
   plot1<-ggplot(df,aes(x=number,y=MSE))+geom_point(shape=21)
-  #return(plot1)
   i=which.min(MSE)
   return(list(CV=MSE[i], Features=Features[[i]],plot=plot1))
 }
@@ -123,7 +114,11 @@ myCV(as.matrix(swiss[,2:6]), swiss[[1]], 5)
 
 ```
 
-The result shows the best subset is (1,0,1,1,1) with MSE 60.15763. From the plot, we can observe that with the number of features increases, in general, the values of MSE decreases. For the best subset, its' MSE minimized when the number of features is 4. When the number of features is small, the model can be inaccurate, but if with too many parameters, the model will be difficult to use and interpret since it's overfitted.
+From the MSE plot it can be observed that along the number of features under consideration is increased, the MSE measured tend to decrease. This  indicates that using simple models underfits the data, though using too many can also overfit the data and make the MSE scores increase again.
+
+The minimum MSE score is reached at 4 features and its value is 60.15763. The best features subset is $x = (1,0,1,1,1)$ which comprise agriculture, education, religion and infant mortality data. As examination feature is dropped it can be intepreted that marks on army examinations do not contribute to explain Fertility changes.
+
+
 
 # Assignment 4. Linear regression and regularization
 
