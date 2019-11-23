@@ -13,6 +13,10 @@ library(ggplot2)
 library(MASS)
 library(glmnet)
 ```
+#### Acknowledgements
+The problems for this assignment were solved mainly under Lab time and study meetings. Although we worked together, every team member has written his own individual report by himself and this document summarize the best of all three individual reports.
+
+First question is based on Marcos' work, third one is based on Zuxiang's report, and fourth one is based on Agustín's solution. After compiling them the report was polished by all team members.
 
 # Assignment 1. Spam classification with nearest neighbors
 
