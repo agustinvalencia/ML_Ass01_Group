@@ -64,59 +64,88 @@ confusion <- function(data, criteria, pred) {
 #model
 form <- Spam ~ .
 model <- glm(formula = form, data = train, family = "binomial")
+```
+
+Confusion matrix for training data:
+```{r, warning=FALSE, echo=FALSE}
 #train
+
 pred <- predict(model, train, type = "response")
 confusion(data = train, criteria = 0.5, pred = pred)
+```
+
+Confusion matrix for testing data:
+```{r, warning=FALSE, echo=FALSE}
 #test
 pred <- predict(model, test, type = "response")
 confusion(data = test, criteria = 0.5, pred = pred)
 ```
 
-The confusion matrix measure how well our model is performing under its training. For this particular classification principle, the miscalssification rate is somewhat low (~17%), but the false positive rate is high (~30%). This means that real mail is often being flagged as spam. To reduce this, we can increase the classification principle, as we can see below.
+The confusion matrix measure how well our model is performing under its training. This model performed similarly for both training and testing data. Although having similar performance scores, the true positive rate drops around 4% from tranining to testing data. The misclassification rate is somewhat low (~17%), but the false positive rate is high (~30%). This means that real mail is often being flagged as spam. To reduce this, we can increase the classification principle, as we can see below.
 
 ### 3. Use logistic regression to classify the test data by the classification principle  $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.8$, otherwise $\hat{Y} = 0$ 
 
+Confusion matrix for training data:
 ```{r, echo=FALSE}
 #train
 pred <- predict(model, train, type = "response")
 confusion(data = train, criteria = 0.8, pred = pred)
+```
+
+Confusion matrix for testing data:
+```{r, echo=FALSE}
 #test
 pred <- predict(model, test, type = "response")
 confusion(data = test, criteria = 0.8, pred = pred)
 ```
 
-Even though the misclassification rate went up with the new criteria, it is still preffered over the old criteria. In this particular classification scenario (spam or not spam), classifying "real mail" as spam is much worse than classifying spam as "real mail". From a user point of view, having some spam on one's inbox is better than missing "real mail" that went to the spam box. Here, the key is analysing the false positive rate, which is much smaller for the new criteria of 0.8.
+Even though the misclassification rate went up with the new criteria, it is still preferred over the previous criteria. In this particular classification scenario (spam or not spam), classifying "real mail" as spam is much worse than classifying spam as "real mail". From a user point of view, having some spam in one's inbox is better than missing "real mail" that went to the spam box. Here, the key is analysing the false positive rate, which is much smaller for the new criteria of $p(Y=1 | X ) > 0.8$.
 
 ### 4. Use standard kknn() with K = 30 from package *kknn*, report the misclassification rates for the training and test data and compare the results with step 2.
 
 ```{r, echo=FALSE}
 model <- train.kknn(formula = form, data = train, ks = 30)
+```
 
-
+Confusion matrix for training data:
+```{r, echo=FALSE}
 #train
 pred <- predict(model, train)
 confusion(data = train, criteria = 0.5, pred = pred)
+```
+
+Confusion matrix for testing data:
+```{r, echo=FALSE}
 #test
 pred <- predict(model, test)
 confusion(data = test, criteria = 0.5, pred = pred)
 ```
 
-The new model has worse results than the logistic regression with significantly higher miscalssification rates for both test and training data. This approach also results in a higher number of false positives and false negatives.
+The new model has worse results than the logistic regression with significantly higher misclassification rates for both test and training data. This approach also results in a higher number of false positives and false negatives.
 
 ### 5. Repeat step 4 for K=1 and compare results with step 4. What effects does the decrease of K lead to and why?
 
 ```{r, echo=FALSE}
 model <- train.kknn(formula = form, data = train, ks = 1)
+```
 
+Confusion matrix for training data:
+```{r, echo=FALSE}
 #train
 pred <- predict(model, train)
 confusion(data = train, criteria = 0.5, pred = pred)
+```
+
+Confusion matrix for testing data:
+```{r, echo=FALSE}
 #test
 pred <- predict(model, test)
 confusion(data = test, criteria = 0.5, pred = pred)
 ```
 
-In this case, decreasing K to 1 in our model completly overfitted the data. That is, the predicted values according to the model are exaclty the training values. This leads to worse performance using the testing data: higher misclassification, false positives, and false negatives rates. When run against the training data, the misclassification rate was 0%, as expected.
+In this case, decreasing K to 1 in our model overfitted the data. That is, the predicted values according to the model are exaclty the training values. When predicting the training data itself, the misclassification rate was 0%, as expected. 
+
+While using the testing data, however, this leads to worse performance: higher misclassification, false positives, and false negatives rates. 
 
 # Assignment 3. Feature selection by cross-validation in a linear model. 
 
