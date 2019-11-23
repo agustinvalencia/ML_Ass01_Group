@@ -256,11 +256,12 @@ plot(data$Protein, data$Moisture)
 
 By the plot, although there are some outliers, it seems that the data could be approximated by a linear model. 
 
-### 2. Consider model $M_i$ in which Moisture is normally distributed and the expected Moisture is polynomial 
+### 2. Consider model $M_i$ in which Moisture is normally distributed, and the expected Moisture is a polynomial function of Protein including the polynomial terms up to power i (i.e $M_1$ is a linear model, $M_2$ is a quadratic model and so on). Report a probabilistic model that describes $M_i$. Why is it appropriate to use MSE criterion when fitting this model to a training data?
 
 $$M_{i} = \sum_{j=0}^{i}{\beta_j x^j} + \varepsilon$$
 $$i = {1,\cdots, 6} $$
 $$\varepsilon \sim N(\mu,\sigma^2)$$
+With increasing model complexity (higher n polynomial degrees), the model tends to be overfitted, capturing noise from the training data. An overfitted model would produce inferior results (higher variance) when predicting for the test data. The MSE criterion therefore can tell how well fit (or under/overfit) the model is to the data.
 
 ### 3. Divide the data (50/50) and fit models $M_i, i=1,\cdots, 6$. For each model, record the training and validation MSE and present a plot showing how training and validation MSE depend on $i$. Which model is best according to this plot? How do MSE values change and why? Interpret this picture in bias-variance tradeoff.
 
@@ -331,6 +332,10 @@ p
 
 ```
 
+The plot shows a decreasing MSE score for the training data. This is expected because the more complex models fit the training data “better” by capturing its noise. By analysing the MSE score for the training data only, one could erroneously think that the more complex the model, the better. However, this is not always the case, as we can see in the graph.
+
+High complexity models overfit the data and results in high variance and low bias. On the other hand, simplistic models have low variance and high bias. This MSE plot helps the choice of the most balanced model bias-variance wise. In this case, a 3rd degree polynomial model.
+
 ### 4. Perform variable selection of a linear model in which Fat is response and Channel1-Channel100 are predictors by using stepAIC. Comment on how many variables were selected.
 
 ```{r, echo=FALSE, results="hide"}
@@ -360,7 +365,7 @@ model_ridge <- glmnet(covariates, response, alpha = 0, family = "gaussian")
 plot(model_ridge, xvar="lambda", label=T)
 ```
 
-It can be seen that when using Ridge regression among the $\lambda$ increasing, coefficients converge to zero, though the amount of parameters still 100 since Ridge do not drop them. 
+It can be seen that, when using Ridge regression, for increasing values of $\lambda$, the coefficients tend to zero, though the amount of parameters is still 100 since the penalty factor in this regression does not converge to zero, so no actual paramaters are being dropped.
 
 
 ### 6. Repeat step 5 but fit with LASSO instead of the Ridge regression and compare the plots from steps 5 and 6. Conclusions? 
@@ -384,12 +389,12 @@ plot(cv_model_lasso)
 ```
 
 
-From the cross-validated model it is seen that the  $\lambda$ value for which it is obtained the minimum MSE score is at $\lambda_{min} = 0$. The model has 100 non-zero parameters. Along $\log(\lambda)$ increases MSE also increases
+From the cross-validated model it is seen that the  $\lambda$ value for the minimum obtained MSE score is at $\lambda_{min} = 0$. The model has 100 non-zero parameters. An increase in $\log(\lambda)$ increases MSE.
 
 
 ### 8. Compare the results from steps 4 and 7.
 
-For (4) after performing a stepAIC over the model 36 variables were dropped, getting a final model with only 63 variables (plus the intercept). Nonetheless, for (7) after cross-validating the LASSO model it has been found that the best performance regarding MSE scores is at $\lambda=0$ which implies no penalization, thus, no parameters will be dropped.
+For (4) after performing a stepAIC over the model, 36 variables were dropped, getting a final model with only 63 variables (plus the intercept). Nonetheless, for (7) after cross-validating the LASSO model it has been found that the best performance regarding MSE scores is at $\lambda=0$ which implies no penalization, thus, no parameters will be dropped.
 
 \newpage
 # Appendix A - Code chunks
