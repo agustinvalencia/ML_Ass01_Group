@@ -234,9 +234,9 @@ myCV(as.matrix(swiss[,2:6]), swiss[[1]], 5)
 
 ```
 
-From the MSE plot it can be observed that along the number of features under consideration is increased, the MSE measured tend to decrease. This  indicates that using simple models underfits the data, though using too many can also overfit the data and make the MSE scores increase again.
+From the MSE plot it can be observed that when the number of features under consideration is increased, the MSE tends to decrease. This indicates that, in this case, using simple models underfits the data, though using too many can also overfit the data and make the MSE scores increase again.
 
-The minimum MSE score is reached at 4 features and its value is 60.15763. The best features subset is $x = (1,0,1,1,1)$ which comprise agriculture, education, religion and infant mortality data. As examination feature is dropped it can be intepreted that marks on army examinations do not contribute to explain Fertility changes.
+The minimum MSE score is reached at 4 features and its value is 60.15763. The best features subset is $x = (1,0,1,1,1)$ which comprise `agriculture`, `education`, `religion` and `infant mortality` data. As `examination` feature is dropped it can be intepreted that marks on army examinations do not contribute to explain Fertility changes.
 
 
 
